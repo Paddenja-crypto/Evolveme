@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EVOLVEME - World Mode</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="stage0.png">
+  <style>
+    body {
+      margin: 0; padding: 0;
+      font-family: sans-serif;
+      background: #0d0d0d;
+      color: #fff;
+      text-align: center;
+    }
+    .container {
+      padding: 30px 20px;
+    }
+    #avatar {
+      width: 128px;
+      height: 128px;
+      margin-top: 20px;
+    }
+    #evolveBtn {
+      background: #ff00a6;
+      border: none;
+      color: white;
+      font-size: 1.5em;
+      padding: 20px 30px;
+      border-radius: 10px;
+      cursor: pointer;
+      margin: 30px 0;
+    }
+    .log, .tree {
+      max-height: 200px;
+      overflow-y: auto;
+      text-align: left;
+      margin: 20px auto;
+      width: 90%;
+      border-top: 1px solid #333;
+      padding-top: 10px;
+    }
+    .tree { display: none; }
+    button.toggle {
+      margin-top: 10px;
+      background: #333;
+      color: #fff;
+      padding: 10px;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧬 EVOLVEME</h1>
+    <img id="avatar" src="stage0.png" alt="Avatar">
+    <p id="counter">Followers: 0</p>
+    <button id="evolveBtn" onclick="evolve()">Evolve</button>
+    <button class="toggle" onclick="toggleTree()">Toggle Mutation Tree</button>
+    <div class="log" id="log"></div>
+    <div class="tree" id="tree"></div>
+  </div>
+
+<script>
+  let followers = 0;
+  let stage = 0;
+  let history = [];
+
+  function evolve() {
+    let gain = Math.floor(Math.random() * 100 + 50);
+    followers += gain;
+    document.getElementById("counter").innerText = "Followers: " + followers;
+
+    let entry = `+${gain} followers`;
+    history.push(entry);
+    updateLog(entry);
+    updateAvatar();
+    updateTree();
+  }
+
+  function updateLog(text) {
+    const logDiv = document.getElementById("log");
+    const div = document.createElement("div");
+    div.innerText = text;
+    logDiv.prepend(div);
+  }
+
+  function updateAvatar() {
+    let img = document.getElementById("avatar");
+    if (followers >= 1500) {
+      img.src = "stage2.png";
+      stage = 2;
+    } else if (followers >= 500) {
+      img.src = "stage1.png";
+      stage = 1;
+    } else {
+      img.src = "stage0.png";
+      stage = 0;
+    }
+  }
+
+  function updateTree() {
+    const tree = document.getElementById("tree");
+    tree.innerHTML = "<strong>Mutation Tree:</strong><br>" + history.map((e, i) => `🔹 Stage ${i + 1}: ${e}`).join("<br>");
+  }
+
+  function toggleTree() {
+    const tree = document.getElementById("tree");
+    tree.style.display = tree.style.display === "none" ? "block" : "none";
+  }
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js');
+  }
+</script>
+</body>
+</html>
